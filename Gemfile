@@ -7,6 +7,8 @@ gem 'dotenv'
 gem 'haml'
 gem 'rake'
 gem 'browserstack-screenshot'
+gem 'friendly_id'
+gem 'activesupport'
 
 group :test do
   gem 'spinach'

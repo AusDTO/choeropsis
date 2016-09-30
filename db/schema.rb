@@ -15,8 +15,9 @@ ActiveRecord::Schema.define(version: 20160930043315) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "batch", force: :cascade do |t|
+  create_table "batches", force: :cascade do |t|
     t.integer  "environment_id"
+    t.string   "bs_job_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -24,6 +25,7 @@ ActiveRecord::Schema.define(version: 20160930043315) do
   create_table "environments", force: :cascade do |t|
     t.integer "project_id"
     t.string  "name"
+    t.string  "slug"
     t.string  "domain"
   end
 
@@ -43,11 +45,13 @@ ActiveRecord::Schema.define(version: 20160930043315) do
 
   create_table "projects", force: :cascade do |t|
     t.string "name"
+    t.string "slug"
   end
 
-  create_table "snap", force: :cascade do |t|
+  create_table "snaps", force: :cascade do |t|
     t.integer "batch_id"
     t.integer "page_id"
+    t.integer "platform_id"
     t.string  "thumb_url"
     t.string  "image_url"
   end
