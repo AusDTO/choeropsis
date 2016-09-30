@@ -1,3 +1,4 @@
+require 'active_support/core_ext/hash/slice'
 require 'dotenv'
 require 'sinatra/base'
 require 'sinatra/activerecord'
@@ -5,7 +6,6 @@ require 'haml'
 require 'friendly_id'
 require './models'
 require 'screenshot'
-require 'active_support/core_ext/hash/slice'
 
 Dotenv.load
 
@@ -15,11 +15,11 @@ class ChoeropsisApp < Sinatra::Application
   post '/projects/:project_slug/environments/:environment_slug/batch' do
     project = Project.friendly.find params[:project_slug]
     environment = project.environments.friendly.find params[:environment_slug]
-    batch = environment.batches.create
+    batch = environment.batches.create page: project.page
     callback_url = "http://localhost/batches/#{batch.id}/callback"
     logger.info "Going in with #{bs_settings}"
     id = generate_screenshots project, environment, callback_url
-    batch.bs_job_id = id
+    batch.update_attribute :bs_job_id, id
     logger.info "Job ID: #{batch.bs_job_id}"
   end
 
@@ -27,12 +27,14 @@ class ChoeropsisApp < Sinatra::Application
     logger.info params
   end
 
-  get '/' do
-    'hello'
+  post '/batches/:batch_id/populate' do
+    batch = Batch.find params[:batch_id]
+    populate_screenshots batch
   end
 
-  def browserstack_client
-    @browserstack_client ||= Screenshot::Client.new bs_settings
+  get '/batches/:batch_id' do
+    batch = Batch.find params[:batch_id]
+    haml :batch, locals: { batch: batch }
   end
 
   def generate_screenshots(project, environment, callback_url)
@@ -43,11 +45,7 @@ class ChoeropsisApp < Sinatra::Application
       callback_url: callback_url,
       tunnel: false,
       browsers: project.platforms.collect {|platform|
-        platform.attributes.with_indifferent_access.slice(
-          :os,
-          :os_version,
-          :browser,
-          :browser_version)
+        platform.attributes.with_indifferent_access.slice *platform_attributes
       }
     }
 
@@ -56,9 +54,37 @@ class ChoeropsisApp < Sinatra::Application
     browserstack_client.generate_screenshots params
   end
 
+  def populate_screenshots(batch)
+    resp = browserstack_client.screenshots batch.bs_job_id
+    batch.snaps.delete_all
+    logger.info resp
+
+    resp.each do |ss|
+      platform = batch.project.platforms.find_by ss.slice *platform_attributes
+
+      batch.snaps.create do |snap|
+        snap.platform = platform
+        snap.thumb_url = ss[:thumb_url]
+        snap.image_url = ss[:image_url]
+      end
+    end
+  end
+
   private
 
+  def browserstack_client
+    @browserstack_client ||= Screenshot::Client.new bs_settings
+  end
+
+  def platform_attributes
+    [ :os,
+      :os_version,
+      :browser,
+      :browser_version ]
+  end
+
   def bs_settings
-    { username: ENV['BROWSERSTACK_USERNAME'], password: ENV['BROWSERSTACK_KEY'] }
+    { username: ENV['BROWSERSTACK_USERNAME'],
+      password: ENV['BROWSERSTACK_KEY'] }
   end
 end

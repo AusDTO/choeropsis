@@ -1,3 +1,5 @@
+require 'active_support/core_ext/module/delegation'
+
 class Project < ActiveRecord::Base
   extend FriendlyId
   friendly_id :name, use: :slugged
@@ -37,11 +39,13 @@ end
 
 class Batch < ActiveRecord::Base
   belongs_to :environment
+  belongs_to :page
   has_many :snaps
+
+  delegate :project, to: :environment
 end
 
 class Snap < ActiveRecord::Base
   belongs_to :batch
-  belongs_to :page
   belongs_to :platform
 end

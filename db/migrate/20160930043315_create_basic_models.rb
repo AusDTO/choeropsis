@@ -28,13 +28,13 @@ class CreateBasicModels < ActiveRecord::Migration
 
     create_table :batches do |t|
       t.references :environment
+      t.references :page
       t.string :bs_job_id
       t.timestamps
     end
 
     create_table :snaps do |t|
       t.references :batch
-      t.references :page
       t.references :platform
       t.string :thumb_url
       t.string :image_url
