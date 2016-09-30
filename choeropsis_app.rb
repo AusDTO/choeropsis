@@ -24,12 +24,15 @@ class ChoeropsisApp < Sinatra::Application
   end
 
   get '/batches/:batch_id/callback' do
-    logger.info params
+    batch = Batch.find params[:batch_id]
+    data = JSON.parse(params).with_indifferent_access[:screenshots]
+    populate_screenshots batch, data
   end
 
   post '/batches/:batch_id/populate' do
     batch = Batch.find params[:batch_id]
-    populate_screenshots batch
+    resp = browserstack_client.screenshots batch.bs_job_id
+    populate_screenshots batch, resp
   end
 
   get '/batches/:batch_id' do
@@ -54,12 +57,10 @@ class ChoeropsisApp < Sinatra::Application
     browserstack_client.generate_screenshots params
   end
 
-  def populate_screenshots(batch)
-    resp = browserstack_client.screenshots batch.bs_job_id
+  def populate_screenshots(batch, data)
     batch.snaps.delete_all
-    logger.info resp
 
-    resp.each do |ss|
+    data.each do |ss|
       platform = batch.project.platforms.find_by ss.slice *platform_attributes
 
       batch.snaps.create do |snap|
