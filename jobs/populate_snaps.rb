@@ -23,7 +23,7 @@ class PopulateSnaps
       when 'slack'
         notifier = Slack::Notifier.new n.webhook_url
         url = "#{ENV['SERVER_URL_BASE']}/batches/#{batch.id}"
-        message = "Snaps available (#{batch.environment}): [view them](#{url})"
+        message = "Snaps available (#{batch.environment}, #{batch.page_name}): [view them](#{url})"
         notifier.ping message
       else
         logger.warn "Unknown notifier type: #{n.target}"

@@ -19,17 +19,24 @@ class SpawnBatches
     conf = YAML.parse(open(config_path)).to_ruby.with_indifferent_access
 
     conf[:pages].each do |name, path|
+      url_base = conf[:environments][environment]
+
+      if batch.project.basic_auth.present?
+        protocol, host = url_base.split('://')
+        url_base = "#{protocol}://#{batch.project.basic_auth}@#{host}"
+      end
+
       batch = Batch.create! do |b|
         b.project = project
         b.environment = environment
         b.page_name = name
-        b.url = "#{conf[:environments][environment]}#{path}"
+        b.url = "#{url_base}#{path}"
       end
 
       conf[:platforms].each do |platform|
         Snap.create! do |s|
           s.batch = batch
-          
+
           platform.slice(*platform_attributes).collect do |k, v|
             s.send "#{k}=", v.to_s
           end

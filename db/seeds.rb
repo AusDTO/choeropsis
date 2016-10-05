@@ -1,6 +1,7 @@
 JSON.parse(ENV['PROJECT_SEEDS']).each do |elem|
   project = Project.find_or_create_by! name: elem['name']
   project.update_attribute :repo, elem['repo']
+  project.update_attribute :basic_auth, elem['basic_auth']
   project.notifications.delete_all
 
   project.notifications.create! do |n|

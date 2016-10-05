@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161005010711) do
+ActiveRecord::Schema.define(version: 20161005042206) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,6 +36,7 @@ ActiveRecord::Schema.define(version: 20161005010711) do
     t.string "slug"
     t.string "repo"
     t.string "github_user"
+    t.string "basic_auth"
   end
 
   create_table "snaps", force: :cascade do |t|
