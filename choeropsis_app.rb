@@ -31,6 +31,10 @@ class ChoeropsisApp < Sinatra::Application
     SpawnBatches.perform_async project.id, environment, gh_branch
   end
 
+  get '/' do
+    'Choeropsis'
+  end
+
   get '/batches/:batch_id/callback' do
     batch = Batch.find params[:batch_id]
     PopulateSnaps.perform_async batch.id

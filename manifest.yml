@@ -1,0 +1,5 @@
+---
+applications:
+  - buildpack: https://github.com/cloudfoundry/ruby-buildpack.git
+    memory: 1G
+    instances: 1

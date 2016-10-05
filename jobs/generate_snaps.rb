@@ -10,7 +10,7 @@ class GenerateSnaps
 
     params = {
       url: batch.url,
-      callback_url: "#{ENV['SERVER_URL_BASE']}/#{batch.id}/callback",
+      callback_url: "#{ENV['SERVER_URL_BASE']}/batches/#{batch.id}/callback",
       tunnel: false,
       browsers: batch.snaps.collect {|snap| snap.bs_platform_atts.collect {|k, v| [k, v.to_s]}.to_h }
     }
