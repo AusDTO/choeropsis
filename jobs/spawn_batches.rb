@@ -21,9 +21,9 @@ class SpawnBatches
     conf[:pages].each do |name, path|
       url_base = conf[:environments][environment]
 
-      if batch.project.basic_auth.present?
+      if project.basic_auth.present?
         protocol, host = url_base.split('://')
-        url_base = "#{protocol}://#{batch.project.basic_auth}@#{host}"
+        url_base = "#{protocol}://#{project.basic_auth}@#{host}"
       end
 
       batch = Batch.create! do |b|
