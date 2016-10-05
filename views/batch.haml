@@ -2,22 +2,27 @@
 %html
   %head
     %title Choeropsis
+    %link{rel: :stylesheet, type: 'text/css', href: "/bootstrap.min.css"}
   %body
-    %h1
-      = "#{batch.project.name} (#{batch.environment.name})"
-    %h2
-      = "Page: #{batch.page.path}"
-    %h3
-      = "Screenshots taken: #{batch.created_at}"
-    .jumbotron
-      - batch.snaps.each_slice(4) do |slice|
-        .row
-          - slice.each do |snap|
-            .col-md-1
-              %a{ href: snap.image_url }
-                %img{ src: snap.thumb_url }
-                %br
-                %span.os
-                  = "#{snap.platform.os} #{snap.platform.os_version}"
-                %span.browser
-                  = "#{snap.platform.browser} #{snap.platform.browser_version}"
+    .container
+      %h1
+        = "#{batch.project.name} (#{batch.environment})"
+      %h2
+        = "Page: #{batch.page_name}"
+      - if batch.generated?
+        %h3
+          = "Screenshots requested: #{batch.created_at}"
+        .jumbotron
+          - batch.snaps.each_slice(4) do |slice|
+            .row
+              - slice.each do |snap|
+                .col-md-3
+                  %a{ href: snap.image_url, target: '_blank' }
+                    %img{ src: snap.thumb_url }
+                    %br
+                    %span.platform
+                      = "#{snap.platform}"
+      - else
+        %h3 Screenshots pending
+        %form{ action: "/batches/#{batch.id}/populate", method: 'POST' }
+          %input{ type: 'submit', value: 'Try populating manually' }

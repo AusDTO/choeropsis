@@ -10,48 +10,37 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160930043315) do
+ActiveRecord::Schema.define(version: 20161005010711) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "batches", force: :cascade do |t|
-    t.integer  "environment_id"
-    t.integer  "page_id"
+    t.integer  "project_id"
+    t.string   "environment"
+    t.string   "page_name"
+    t.string   "url"
     t.string   "bs_job_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "environments", force: :cascade do |t|
+  create_table "notifications", force: :cascade do |t|
     t.integer "project_id"
-    t.string  "name"
-    t.string  "slug"
-    t.string  "domain"
-  end
-
-  create_table "pages", force: :cascade do |t|
-    t.integer "project_id"
-    t.string  "path"
-    t.boolean "ssl",        default: false, null: false
-  end
-
-  create_table "platforms", force: :cascade do |t|
-    t.integer "project_id"
-    t.string  "os"
-    t.string  "os_version"
-    t.string  "browser"
-    t.string  "browser_version"
+    t.string  "target"
+    t.string  "webhook_url"
   end
 
   create_table "projects", force: :cascade do |t|
     t.string "name"
     t.string "slug"
+    t.string "repo"
+    t.string "github_user"
   end
 
   create_table "snaps", force: :cascade do |t|
     t.integer "batch_id"
-    t.integer "platform_id"
+    t.jsonb   "bs_platform_atts"
     t.string  "thumb_url"
     t.string  "image_url"
   end

@@ -9,13 +9,14 @@ gem 'rake'
 gem 'browserstack-screenshot'
 gem 'friendly_id'
 gem 'activesupport'
+gem 'sucker_punch', '~> 2.0'
+gem 'slack-notifier'
 
 group :test do
   gem 'spinach'
   gem 'capybara'
   gem 'rspec'
 end
-
 
 # gem 'rails', '5.0.0.1'
 # gem 'sqlite3'

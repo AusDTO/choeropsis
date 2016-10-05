@@ -70,10 +70,13 @@ GEM
     sinatra-activerecord (2.0.10)
       activerecord (>= 3.2)
       sinatra (~> 1.0)
+    slack-notifier (1.5.1)
     spinach (0.9.0)
       colorize
       gherkin-ruby (>= 0.3.2)
       json
+    sucker_punch (2.0.2)
+      concurrent-ruby (~> 1.0.0)
     thread_safe (0.3.5)
     tilt (2.0.5)
     tzinfo (1.2.2)
@@ -97,7 +100,9 @@ DEPENDENCIES
   rspec
   sinatra
   sinatra-activerecord
+  slack-notifier
   spinach
+  sucker_punch (~> 2.0)
 
 BUNDLED WITH
    1.12.5
